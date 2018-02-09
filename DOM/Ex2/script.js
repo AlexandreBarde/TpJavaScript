@@ -14,15 +14,15 @@ tab.ondblclick=function(e)
     if (type === 'TD')
     {
         // récupérer le texte de la cellule
-        var txt = td.innerHTML;
+        var txt = td.firstChild;
 
         // créer un noeud élément de type input
         var input = document.createElement("input");
             // et lui donner comme value le texte
-        input.value = txt;
+        input.value = txt.nodeValue;
 
         // remplacer dans le tableau le noeud texte de la cellule par le noeud input
-        td.parentNode.replaceChild(input, td);
+        td.replaceChild(input, txt);
 
         // mettre le focus et sélectionner la ligne d'édition input
         input.focus();
@@ -38,7 +38,7 @@ tab.ondblclick=function(e)
 
             // supprimer le champ input inutile
             //input.remove();
-            input.parentNode.replaceChild(td, input);
+            //input.replaceChild(td, input);
         }
     }
 };
