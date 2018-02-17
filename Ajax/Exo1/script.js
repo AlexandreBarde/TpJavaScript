@@ -19,7 +19,7 @@ function getXhr()
         alert("Votre navigateur ne supporte pas les objets XMLHTTPRequest");
         xhr = false ;
     }
-    return xhr;
+    return xhr; 
 }
 
 
