@@ -1,28 +1,31 @@
-
 <?php
-$a = array('<foo>',"'bar'",'"baz"','&blong&', "\xc3\xa9");
+if(isset($_GET['cp']))
+{
 
-echo "Normal : ",  json_encode($a), "\n";
-echo "Tags : ",    json_encode($a, JSON_HEX_TAG), "\n";
-echo "Apos : ",    json_encode($a, JSON_HEX_APOS), "\n";
-echo "Quot : ",    json_encode($a, JSON_HEX_QUOT), "\n";
-echo "Amp : ",     json_encode($a, JSON_HEX_AMP), "\n";
-echo "Unicode : ", json_encode($a, JSON_UNESCAPED_UNICODE), "\n";
-echo "Toutes : ",     json_encode($a, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE), "\n\n";
+    header('Content-Type: application/json');
+    try
+    {
+        $pdo = new PDO("mysql:host=localhost;dbname=TPAjax2", "root", "");
+        $pdo->exec("SET CHARACTER SET utf8");
+    }
+    catch(Exception $e)
+    {
+        die('Erreur : ' . $e->getMessage());
+    }
 
-$b = array();
+    $requete = 'SELECT * FROM Villes WHERE cp = :cp';
+    $req = $pdo->prepare($requete);
+    $req->execute(array(':cp' => $_GET['cp']));
 
-echo "Tableau vide sous forme de tableau : ", json_encode($b), "\n";
-echo "Tableau vide sous forme d'objet : ", json_encode($b, JSON_FORCE_OBJECT), "\n\n";
-
-$c = array(array(1,2,3));
-
-echo "Tableau non-associatif sous forme de tableau : ", json_encode($c), "\n";
-echo "Tableau non-associatif sous forme d'objet : ", json_encode($c, JSON_FORCE_OBJECT), "\n\n";
-
-
-$d = array('foo' => 'bar', 'baz' => 'long');
-
-echo "Tableau associatif affiché comme objet: ", json_encode($d), "\n";
-echo "Tableau associatif affiché comme objet: ", json_encode($d, JSON_FORCE_OBJECT), "\n\n";
-?>
+    while($data = $req->fetch())
+    {
+        $donnees[] = array('nomVille' => $data['ville'], 'nomCommune' => $data['commune']);
+    }
+    $req->closeCursor();
+    echo json_encode($donnees);
+}
+else
+{
+    echo "Erreur";
+    header("Location: index.php");
+}
